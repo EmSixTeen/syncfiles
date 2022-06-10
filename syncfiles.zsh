@@ -10,8 +10,8 @@ emulate -LR zsh
 
 # Remote settings
 # ==========
-remoteUser='tangajhw' # cPanel username
-remoteHost='tangarholen.no' # Domain or IP
+remoteUser='yourcpanelusername' # cPanel username
+remoteHost='yourdomain.tld' # Domain or IP
 
 # Directory settings
 # - Where is the WordPress installation? If it's on the root, chances are it's
