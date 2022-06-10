@@ -1,7 +1,9 @@
 # Syncfiles - Easy rsync
+Easily rsync WordPress theme files up and down from your local machine to your
+remote server, using a function named `syncfiles`.
 
-## Features:
-- Loads a syncfiles.zsh file from the current folder, which sets some
+## Features
+- Loads a `syncfiles.zsh` file from the current folder, which sets some
   variables that are specific for that site, eg:
     - user (cPanel username)
     - host (domain name)
@@ -34,18 +36,19 @@
   - Specify the SSH port
       - `-p=*` | `--port=*`
       - Rarely non-default, always port 22 on ProISP
-  - Sync the uploads folder
+  - Sync the WordPress uploads folder
       - `--uploads`
       - Changes to uploads folder and syncs it in the direction chosen.
-  - Sync the plugins folder
+  - Sync the WordPress plugins folder
       - `--plugins`
       - Changes to plugins folder and syncs it in the direction chosen.
   - Debug
       - `--debug`
       - Echo the full string just so we can check it, nothing fancy.
 
-## Goals:
-- Pull down plugins
-- Pull down uploads
+## Requirements
+You must have authorised your SSH key on the remote machine.
+
+## Goals
 - Delete twenty-x themes, hello dolly, and akismet
 - Automatically set wp environment to production?
