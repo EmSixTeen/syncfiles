@@ -67,6 +67,7 @@ rsyncExcludes=(
     "\*.keep"
     "\*.md"
     "\*.psd"
+    "\*.scss"
     "\*.sh"
     "\*.wpress"
     "\*.zsh"
@@ -76,5 +77,4 @@ rsyncExcludes=(
     "package.json"
     "phpcs.\*"
     "report/"
-    "template-parts/"
 )
