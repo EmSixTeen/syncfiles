@@ -58,10 +58,25 @@ function syncfiles() {
 
     # Todo: Set the filename here, re-use in the if statement and elsewhere
     # configFile='syncfiles.zsh'
+
+    # Set up colours
+    local Black='\033[0;30m'        # Black
+    local Red='\033[0;31m'          # Red
+    local Green='\033[0;32m'        # Green
+    local Yellow='\033[0;33m'       # Yellow
+    local Blue='\033[0;34m'         # Blue
+    local Purple='\033[0;35m'       # Purple
+    local Cyan='\033[0;36m'         # Cyan
+    local White='\033[0;37m'        # White
+    local NC='\033[0m'              # No Color
+
+    local arrow="${Cyan}->${NC}"
+    local arrowError="${Red}->${NC}"
+    local arrowSuccess="${Green}->${NC}"
     
     if [[ -f syncfiles.zsh ]]
     then
-        echo "✅ syncfiles.zsh exists in current directory"
+        echo "$arrowSuccess syncfiles.zsh exists in current directory"
         
         # Set the source file where our variables are set
         source 'syncfiles.zsh'
@@ -76,7 +91,7 @@ function syncfiles() {
                 ! -z "$rsyncExcludes"
         ]]
         then
-            echo "✅ Variables are populated" # 'Populated' - we don't know if they're valid
+            echo "$arrowSuccess Variables are populated" # 'Populated' - we don't know if they're valid
             
             local rsyncDryRun=false
             local rsyncDirection="up"
@@ -86,10 +101,10 @@ function syncfiles() {
             # str="this/is/my/string"
             case "$baseDirectory" in
             */)
-                echo "✅ baseDirectory ends in a trailing slash"
+                echo "$arrowSuccess baseDirectory ends in a trailing slash"
                 ;;
             *)
-                echo "⛔️ ERROR: baseDirectory needs to end in a trailing slash. Setting rsync to --dry-run as a precaution."
+                echo "$arrowError ${Red}Error:${NC} baseDirectory needs to end in a trailing slash. Setting rsync to --dry-run as a precaution."
                 rsyncDryRun=true
                 ;;
             esac
@@ -151,18 +166,20 @@ function syncfiles() {
                         ;;
                     --uploads )         # Sync the uploads folder
                         local uploads=true
+                        excludeString=''
                         ;;
                     --plugins )         # Sync the plugins folder
                         local plugins=true
+                        excludeString=''
                         ;;
                     --debug )           # Echo the string rather than doing it
                         local debug=true
                         ;;
                     -o | -a | -p )
-                        printf "⛔️ ERROR: An option that takes arguments is missing them\n"
+                        printf "$arrowError ${Red}Error:${NC} An option that takes arguments is missing them\n"
                         ;;
                     * )
-                        printf "⛔️ ERROR: Unknown option: $1\n"
+                        printf "$arrowError ${Red}Error:${NC} Unknown option: $1\n"
                         #exit 1
                 esac
                 shift
@@ -171,7 +188,7 @@ function syncfiles() {
             # Build the remote directory string
             local remoteDirectory="$baseDirectory"
             if [[ $uploads == true && $plugins == true ]]; then
-                echo "⛔️ ERROR: Sorry, you can't do --uploads and --plugins at the same time. Setting rsync to --dry-run as a precaution."
+                echo "$arrowError ${Red}Error:${NC} Sorry, you can't do --uploads and --plugins at the same time. Setting rsync to --dry-run as a precaution."
                 rsyncDryRun=true
             
             elif [[ $uploads == true && -z $plugins || $uploads == true && $plugins == false ]]; then
@@ -246,7 +263,7 @@ function syncfiles() {
             if [[ $rsyncDirection == "down" ]]; then
                 rsyncFullString+="$rsyncDownDelete $remoteUser@$remoteHost:$remoteDirectory ."
             elif [[ $rsyncDirection == "up" || -z $rsyncDirection ]]; then
-                rsyncFullString+="$rsyncUpDelete . $remoteUser@$remoteHost:$remoteDirectory --dry-run"
+                rsyncFullString+="$rsyncUpDelete . $remoteUser@$remoteHost:$remoteDirectory"
             fi 
 
             # Check for the --debug flag
@@ -268,10 +285,10 @@ function syncfiles() {
             fi
             
         else
-            echo "⛔️ Check that all variables are set"
+            echo "$arrowError ${Red}Error:${NC} Check that all variables are set"
         fi
     else
-        echo "⛔️ There is no syncfiles.zsh config file present in the current directory"
+        echo "$arrowError ${Red}Error:${NC} There is no syncfiles.zsh config file present in the current directory"
     fi
     
     echo ""
