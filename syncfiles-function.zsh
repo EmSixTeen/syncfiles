@@ -1,3 +1,13 @@
+#!/bin/zsh
+
+# Emulate zsh
+# ==========
+# Putting emulate -LR zsh near the beginning of a function definition is good 
+# hygiene when the function is meant to be used in contexts where options are 
+# potentially different, especially in interactive shells.
+# ( https://unix.stackexchange.com/a/372866 )
+emulate -LR zsh
+
 # # Syncfiles - Easy rsync
 # Easily rsync WordPress theme files up and down from your local machine to your
 # remote server, using a function named `syncfiles`.
@@ -18,7 +28,7 @@
 #   - Specify a specific pattern
 #       - `-o=*` | `--only=*`
 #       - Wildcards need escaped
-#       - ⚠️ Empty folders will downloaded. Not figured out how to avoid that.
+#       - Empty folders will downloaded. Not figured out how to avoid that.
 #       - Example usage: 
 #           - `syncfiles --down --only=\*.php`
 #           - `syncfiles --down --only=navigation.js`
@@ -61,14 +71,14 @@ function syncfiles() {
 
     # Set up colours
     local Black='\033[0;30m'        # Black
-    local Red='\033[0;31m'          # Red
-    local Green='\033[0;32m'        # Green
-    local Yellow='\033[0;33m'       # Yellow
     local Blue='\033[0;34m'         # Blue
-    local Purple='\033[0;35m'       # Purple
     local Cyan='\033[0;36m'         # Cyan
-    local White='\033[0;37m'        # White
+    local Green='\033[0;32m'        # Green
     local NC='\033[0m'              # No Color
+    local Purple='\033[0;35m'       # Purple
+    local Red='\033[0;31m'          # Red
+    local White='\033[0;37m'        # White
+    local Yellow='\033[0;33m'       # Yellow
 
     local arrow="${Cyan}->${NC}"
     local arrowError="${Red}->${NC}"
@@ -196,28 +206,30 @@ function syncfiles() {
                 if [[ "$PWD" = */themes/$themeSlug ]]; then
                     cd ../../uploads/
                     local changedDirectory=true
+
+                    remoteDirectory+="wp-content/uploads/"
+                    echo ""
+                    echo "${Yellow}Changed directory to:${NC} $PWD"
+                    echo "${Yellow}Remote dir (uploads):${NC} $remoteDirectory"
                 fi
-                remoteDirectory+="wp-content/uploads/"
-                echo ""
-                echo "Changed directory to: $PWD"
-                echo "Remote dir (uploads): $remoteDirectory"
             
             elif [[ $plugins == true && -z $uploads || $plugins == true && $uploads == false ]]; then
                 # Check to make sure we're a directory structure ending in /themes/themeslug
                 if [[ "$PWD" = */themes/$themeSlug ]]; then
                     cd ../../plugins/
                     local changedDirectory=true
+
+                    remoteDirectory+="wp-content/plugins/"
+                    echo ""
+                    echo "${Yellow}Changed directory to:${NC} $PWD"
+                    echo "${Yellow}Remote dir (plugins):${NC} $remoteDirectory"            
                 fi
-                remoteDirectory+="wp-content/plugins/"
-                echo ""
-                echo "Changed directory to: $PWD"
-                echo "Remote dir (plugins): $remoteDirectory"            
             else
                 remoteDirectory+="wp-content/themes/"
                 remoteDirectory+="$themeSlug"
                 remoteDirectory+="/"
                 echo ""
-                echo "Remote dir (theme):   $remoteDirectory"
+                echo "${Cyan}Remote dir (theme):${NC}   $remoteDirectory"
             fi
 
             # Append the --dry-run flag to the string if requested
@@ -226,22 +238,22 @@ function syncfiles() {
             fi
 
             echo ""
-            echo "Remote user:          $remoteUser"
-            echo "Remote host:          $remoteHost"
+            echo "${Cyan}Remote user:${NC}          $remoteUser"
+            echo "${Cyan}Remote host:${NC}          $remoteHost"
             echo ""
-            echo "Base directory:       $baseDirectory"
-            echo "Theme slug:           $themeSlug"
+            echo "${Cyan}Base directory:${NC}       $baseDirectory"
+            echo "${Cyan}Theme slug:${NC}           $themeSlug"
             echo ""
-            echo "rsync direction:      $rsyncDirection"
-            echo "rsync dry-run:        $rsyncDryRun"
-            echo "rsync arguments:      $rsyncArgs"
-            echo "rsync port:           $rsyncPort"
+            echo "${Cyan}rsync direction:${NC}      $rsyncDirection"
+            echo "${Cyan}rsync dry-run:${NC}        $rsyncDryRun"
+            echo "${Cyan}rsync arguments:${NC}      $rsyncArgs"
+            echo "${Cyan}rsync port:${NC}           $rsyncPort"
 
             # If the --only flag has been passed, only need to echo that, else echo all excludes
             if [[ $rsyncSpecific == true ]]; then
-                echo "rsync exclude string: $excludeString"
+                echo "${Cyan}rsync exclude string:${NC} $excludeString"
             else
-                echo "rsync excludes:       ${rsyncExcludes//\\/}"  # https://stackoverflow.com/a/15249179
+                echo "${Cyan}rsync excludes:${NC}       ${rsyncExcludes//\\/}"  # https://stackoverflow.com/a/15249179
             fi
             echo ""
 
@@ -269,7 +281,7 @@ function syncfiles() {
             # Check for the --debug flag
             if [[ $debug == true ]]; then
                 # Echo the full string just so we can check it, nothing fancy
-                echo "The whole thing:      $rsyncFullString"
+                echo "${Yellow}The whole thing:${NC}      $rsyncFullString"
                 echo ""
             else
                 eval $rsyncFullString
@@ -281,7 +293,7 @@ function syncfiles() {
                 # cd - # This can work but it prints it out, we'll do that ourselves
                 cd $OLDPWD  
                 echo ""
-                echo "Changed directory to: $PWD"
+                echo "${Yellow}Changed directory to:${NC} $PWD"
             fi
             
         else

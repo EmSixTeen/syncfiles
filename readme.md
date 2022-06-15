@@ -49,6 +49,6 @@ remote server, using a function named `syncfiles`.
 ## Requirements
 You must have authorised your SSH key on the remote machine.
 
-## Goals
+## To-do
 - Delete twenty-x themes, hello dolly, and akismet
-- Automatically set wp environment to production?
+- Automatically set WordPress' environment
