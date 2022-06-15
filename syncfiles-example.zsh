@@ -17,9 +17,7 @@ remoteHost='yourdomain.tld' # Domain or IP
 # - Where is the WordPress installation? If it's on the root, chances are it's
 #   in 'public_html/'
 baseDirectory='public_html/' # Do include trailing slash
-themeSlug='tangarholen' # Don't include the trailing slash
-
-# remoteThemeDirectory='public_html/wp-content/themes/tangarholen/' # Include trailing slash!
+themeSlug='yourthemeslug' # Don't include the trailing slash
 
 # Rsync settings
 # ==========
