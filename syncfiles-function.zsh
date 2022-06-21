@@ -106,6 +106,7 @@ function syncfiles() {
             local rsyncDryRun=false
             local rsyncDirection="up"
             local includeAcfJson=false
+            local includeAllFiles=false
 
             # Check if the baseDirectory variable ends in a trailing slash
             # str="this/is/my/string"
@@ -145,8 +146,6 @@ function syncfiles() {
             # - Adapted from https://stackoverflow.com/a/63653944/493159
             # 
             # Todo:
-            # - Pull down plugins
-            # - Pull down uploads
             # - Delete twenty-x themes, hello dolly, and akismet
             while [ $# -gt 0 ]; do
                 case "$1" in
@@ -159,30 +158,33 @@ function syncfiles() {
                         excludeString+="${1#*=} "
                         excludeString+="--exclude=\* "
                         ;;
-                    --down | --pull )   # Specify that you want to sync downwards
+                    --down | --pull )       # Specify that you want to sync downwards
                         rsyncDirection="down"
                         ;;
-                    --up | --push )     # Specify that you want to sync upwards
+                    --up | --push )         # Specify that you want to sync upwards
                         rsyncDirection="up"
                         ;;
-                    --inc-acf )         # Include the /acf-json/ folder
+                    --inc-acf )             # Include the /acf-json/ folder
                         includeAcfJson=true
                         ;;
-                    -a=* | --args=* )   # Override the arguments
+                    --all )                 # Don't exclude anything
+                        includeAllFiles=true
+                        ;;
+                    -a=* | --args=* )       # Override the arguments
                         rsyncArgs="${1#*=}"
                         ;;
-                    -p=* | --port=* )   # Override the SSH port
+                    -p=* | --port=* )       # Override the SSH port
                         rsyncPort="${1#*=}"
                         ;;
-                    --uploads )         # Sync the uploads folder
+                    --uploads )             # Sync the uploads folder
                         local uploads=true
                         excludeString=''
                         ;;
-                    --plugins )         # Sync the plugins folder
+                    --plugins )             # Sync the plugins folder
                         local plugins=true
                         excludeString=''
                         ;;
-                    --debug )           # Echo the string rather than doing it
+                    --debug )               # Echo the string rather than doing it
                         local debug=true
                         ;;
                     -o | -a | -p )
@@ -197,6 +199,7 @@ function syncfiles() {
             
             # Build the remote directory string
             local remoteDirectory="$baseDirectory"
+            
             if [[ $uploads == true && $plugins == true ]]; then
                 echo "$arrowError ${Red}Error:${NC} Sorry, you can't do --uploads and --plugins at the same time. Setting rsync to --dry-run as a precaution."
                 rsyncDryRun=true
@@ -268,7 +271,9 @@ function syncfiles() {
             fi 
 
             # Append our excludes to the rsync command
-            rsyncFullString+="$excludeString"
+            if [[ $includeAllFiles == false ]]; then
+                rsyncFullString+="$excludeString"
+            fi
 
             # Build the string to do the transfer in the direction we want
             # - Also includes the rsyncUpDelete/rsyncDownDelete setting
