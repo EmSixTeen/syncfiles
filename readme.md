@@ -1,4 +1,4 @@
-# Syncfiles - Easy rsync
+# Syncfiles - Easily rsync WordPress theme files
 Easily rsync WordPress theme files up and down from your local machine to your
 remote server, using a function named `syncfiles`.
 
